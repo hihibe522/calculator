@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <title>calculator</title>
+</head>
+<body>
+    <div class="container">
+        <div class="calculator">
+            <div class="header">
+               
+                    <div class="msg"></div>
+               
+                
+                    <div class="answer"></div>
+                
+            </div>
+            <div class="content">               
+          
+                <button class=" btn btn-info ac">ac</button>
+                <!-- <button class=" btn btn-warning" data-math="%"></button> -->
+                <button class=" btn btn-warning backBtn"> <i class="fa fa-arrow-circle-left"></i></button>
+                <button class=" btn btn-warning" data-math="/">&divide;</button>
+                <button class=" btn btn-outline-secondary" data-num="7">7</button>
+                <button class=" btn btn-outline-secondary" data-num="8">8</button>
+                <button class=" btn btn-outline-secondary" data-num="9">9</button>
+                <button class=" btn btn-warning"data-math="*">&times;</button>
+                <button class=" btn btn-outline-secondary" data-num="4">4</button>
+                <button class=" btn btn-outline-secondary" data-num="5">5</button>
+                <button class=" btn btn-outline-secondary" data-num="6">6</button>
+                <button class=" btn btn-warning" data-math="-">&minus;</button>
+                <button class=" btn btn-outline-secondary" data-num="1">1</button>
+                <button class=" btn btn-outline-secondary" data-num="2">2</button>
+                <button class=" btn btn-outline-secondary" data-num="3">3</button>
+                <button class=" btn btn-warning"data-math="+">+</button>
+                <button class=" btn btn-outline-secondary" data-num=".">.</button>
+                <button class=" btn btn-outline-secondary" data-num="0">0</button>
+                <button class=" btn btn-info eqal">=</button>            
+            </div>
+        </div>
+    </div>
+    <script>
+        var btn = document.querySelectorAll('button');
+        var numBtn = [];
+        var mathBtn = [];
+        var temp = []; 
+        var tempMsg = [];
+        var tempAns = 0;
+        var clickEqal = false;
+       
+        btn.forEach(function(item){
+            if(item.dataset['num']){
+                numBtn.push(item);
+            }
+            if(item.dataset['math']){
+                mathBtn.push(item);
+            }
+        });
+       
+        //依按鈕功能綁定click事件
+        numBtn.forEach(item => item.addEventListener('click',storageNum))
+        mathBtn.forEach(item => item.addEventListener('click',calculate))
+        document.querySelector('.eqal').addEventListener('click',eqal);
+        document.querySelector('.ac').addEventListener('click',cancel);
+        document.querySelector('.backBtn').addEventListener('click',back);
+ 
+        //數字鍵keyin
+        function storageNum(e){
+            console.log(temp.length);
+            console.log(clickEqal);
+            if(temp.length == 3 || clickEqal ){
+               
+                document.querySelector('.answer').innerHTML ="";
+                clickEqal = false;
+            }
+           var keepNum = e.target.dataset.num;
+
+           document.querySelector('.answer').innerText += keepNum;
+           
+        }
+        //符號鍵 keyin 
+        function calculate(e){
+           
+           clickEqal = true ;
+           var sign = e.target.dataset.math;
+           var text =  document.querySelector('.answer').innerText;            
+           document.querySelector('.answer').innerText = '';
+           
+           if(text==""){
+               alert("請先輸入數字")
+             
+
+           }else{
+                temp.push(text);
+                temp.push(sign);
+                tempMsg.push(text);
+                tempMsg.push(sign);
+
+           }
+
+           var msg = tempMsg.join('');             
+           document.querySelector('.msg').innerHTML = msg;
+
+        
+           if(temp.length == 4 && sign){
+            
+            let num1 = parseFloat(temp[0]) ;
+            let num2 = parseFloat(temp[2]) ;
+            sign = temp[1];
+
+            switch(sign){
+
+                case "+":
+                tempAns = num1+num2;
+                break ;
+
+                case "-" :
+                tempAns = num1-num2;
+                
+                break ;
+
+                case "*" :
+                tempAns = num1*num2; 
+                break ;
+
+                case "/" :
+                tempAns = num1/num2; 
+                break ;
+
+                }
+               
+                temp.splice(0,2);
+                temp[0]= tempAns;
+                console.log(temp);
+                console.log(tempMsg);
+                document.querySelector('.answer').innerHTML = tempAns;
+                tempAns = 0;
+        
+           }
+  
+        }
+        // "="鍵keyin
+        function eqal(){
+            text = document.querySelector('.answer').innerText;
+            temp.push(text);
+            document.querySelector('.msg').innerText += text;
+            let num1 = parseFloat(temp[0]) ;
+            let num2 = parseFloat(temp[2]) ;
+            let sign = temp[1];
+
+            switch(sign){
+
+                case "+":
+                tempAns = num1+num2;
+                break ;
+
+                case "-" :
+                tempAns = num1-num2;
+                break ;
+
+                case "*" :
+                tempAns = num1*num2; 
+                break ;
+
+                case "/" :
+                tempAns = num1/num2; 
+                break ;
+                }
+
+                document.querySelector('.answer').innerHTML = tempAns;
+                document.querySelector('.msg').innerHTML = "=";
+
+                temp = [];
+                tempMsg = [];
+                clickEqal = true;
+        }
+        // ac鍵 清除畫面與算式
+        function cancel(){
+
+            document.querySelector('.msg').innerText = "";
+            document.querySelector('.answer').innerText ="";
+            temp = []; 
+            tempAns = 0;
+            clickEqal = false;
+        
+        }
+        // back鍵
+        function back(){
+            let text = document.querySelector('.answer').innerHTML;
+            let text2 = text.slice(0,text.length-1);          
+            document.querySelector('.answer').innerHTML = text2
+        }
+
+
+
+    </script>
+</body>
+</html>
